@@ -3,7 +3,7 @@ set -euo pipefail
 
 # ===================== Nastavení =====================
 DPI=300         # tiskové DPI
-BLEED_MM=3      # spadávka (mm) na každé straně; 0 = bez spadávky
+BLEED_MM=0      # spadávka (mm) na každé straně; 0 = bez spadávky
 
 # ===================== Cesty =====================
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
@@ -179,5 +179,5 @@ for SRC in "${FILES[@]}"; do
 done
 finish_progress
 
-echo "Výstupy:   $OUT_DIR"
-echo "Originály: $DONE_DIR"
+#echo "Výstupy:   $OUT_DIR"
+#echo "Originály: $DONE_DIR"
