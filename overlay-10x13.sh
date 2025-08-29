@@ -7,8 +7,8 @@ BLEED_MM=0      # spadávka (mm) na každé straně; 0 = bez spadávky
 
 # ===================== Cesty =====================
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-FRAME_P="$SCRIPT_DIR/frames/frame_portrait.png"   # 10x13
-FRAME_L="$SCRIPT_DIR/frames/frame_landscape.png"  # 13x10
+FRAME_P="$SCRIPT_DIR/frames/frame_portrait.png"   # 10x15
+FRAME_L="$SCRIPT_DIR/frames/frame_landscape.png"  # 15x10
 
 # Batch timestamp (jedna složka pro celý běh)
 BATCH_ID="$(date +"%Y-%m-%d_%H-%M-%S")"
@@ -37,14 +37,14 @@ move_safely() {
 # ===================== Výpočty rozměrů =====================
 BLEED_PX="$(mm_to_px "$BLEED_MM" "$DPI")"
 W_PX="$(cm_to_px 10 "$DPI")"      # 10 cm
-H_PX="$(cm_to_px 13 "$DPI")"      # 13 cm
+H_PX="$(cm_to_px 15 "$DPI")"      # 15 cm
 TW_P="$(( W_PX + 2*BLEED_PX ))"   # target portrait width
 TH_P="$(( H_PX + 2*BLEED_PX ))"   # target portrait height
-TW_L="$(( H_PX + 2*BLEED_PX ))"   # target landscape width (13)
+TW_L="$(( H_PX + 2*BLEED_PX ))"   # target landscape width (15)
 TH_L="$(( W_PX + 2*BLEED_PX ))"   # target landscape height (10)
 
-AR_P="0.76923077"  # 10/13
-AR_L="1.3"         # 13/10
+AR_P="0.66666667"  # 10/15
+AR_L="1.5"         # 15/10
 
 export MAGICK_THREAD_LIMIT=2
 
@@ -140,7 +140,7 @@ for SRC in "${FILES[@]}"; do
     newH=$(awk -v w="$W" -v ar="$AR" 'BEGIN{printf "%d", w/ar}')
   fi
 
-  TMP="$(mktemp -t 10x13_XXXX).png"
+  TMP="$(mktemp -t 10x15_XXXX).png"
 
   # 1) Ořez na střed (s auto-orient)
   magick "$SRC[0]" -auto-orient -gravity center -crop "${newW}x${newH}+0+0" +repage "$TMP"
