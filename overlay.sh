@@ -14,7 +14,8 @@ FRAME_L="$SCRIPT_DIR/frames/frame_landscape.png"  # 15x10
 BATCH_ID="$(date +"%Y-%m-%d_%H-%M-%S")"
 OUT_DIR="./_output/$BATCH_ID"
 DONE_DIR="./_processed/$BATCH_ID"
-mkdir -p "$OUT_DIR" "$DONE_DIR"
+SOCIAL_DIR="./_social-sites/$BATCH_ID"
+mkdir -p "$OUT_DIR" "$DONE_DIR" "$SOCIAL_DIR"
 
 # ===================== Helpers =====================
 cm_to_px() { awk -v cm="$1" -v dpi="$2" 'BEGIN{printf "%d", (cm/2.54)*dpi + 0.5}'; }
@@ -153,6 +154,30 @@ for SRC in "${FILES[@]}"; do
     -density "$DPI" -units PixelsPerInch \
     "$TMP"
 
+  # 2b) Sociální varianty (z TMP, tedy bez rámu)
+  SOCIAL_SQ="$SOCIAL_DIR/${name}_sq.jpg"
+  if [[ ! -e "$SOCIAL_SQ" ]]; then
+    magick "$TMP" \
+      -filter LanczosSharp -define filter:blur=0.95 \
+      -resize "1080x1080^" \
+      -gravity center -extent 1080x1080 \
+      -unsharp 0x0.5+0.7+0.01 \
+      -quality 85 \
+      "$SOCIAL_SQ"
+  fi
+
+  SOCIAL_PT="$SOCIAL_DIR/${name}_pt.jpg"
+  if [[ ! -e "$SOCIAL_PT" ]]; then
+    magick "$TMP" \
+      -filter LanczosSharp -define filter:blur=0.95 \
+      -resize "1080x1350^" \
+      -gravity center -extent 1080x1350 \
+      -unsharp 0x0.5+0.7+0.01 \
+      -quality 85 \
+      "$SOCIAL_PT"
+  fi
+
+
   # 3) Overlay rámečku (případně otoč si v souborech frames sami)
   if [[ ! -f "$FRAME" ]]; then
     rm -f "$TMP"
@@ -180,6 +205,7 @@ for SRC in "${FILES[@]}"; do
   move_safely "$SRC" "$DONE_DIR"
 
   render_progress "$CUR" "$TOTAL" "ok: $base"
+
 done
 finish_progress
 
