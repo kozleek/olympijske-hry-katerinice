@@ -145,9 +145,13 @@ for SRC in "${FILES[@]}"; do
   # 1) Ořez na střed (s auto-orient)
   magick "$SRC[0]" -auto-orient -gravity center -crop "${newW}x${newH}+0+0" +repage "$TMP"
 
-  # 2) Resize na tiskový rozměr (se spadávkou) + nastavit DPI
-  magick "$TMP" -resize "${TW}x${TH}^" -gravity center -extent "${TW}x${TH}" \
-         -density "$DPI" -units PixelsPerInch "$TMP"
+  # 2) Resize na tiskový rozměr (se spadávkou) + nastavit DPI + jemné doostření
+  magick "$TMP" \
+    -filter LanczosSharp -define filter:blur=0.95 \
+    -resize "${TW}x${TH}^" -gravity center -extent "${TW}x${TH}" \
+    -unsharp 0x0.6+0.8+0.02 \
+    -density "$DPI" -units PixelsPerInch \
+    "$TMP"
 
   # 3) Overlay rámečku (případně otoč si v souborech frames sami)
   if [[ ! -f "$FRAME" ]]; then
